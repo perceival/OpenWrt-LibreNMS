@@ -21,26 +21,7 @@
 
 ### Documentation
 - **README.md** - Complete setup and usage guide
-- **LM-SENSORS-PASS-SETUP.md** - Detailed thermal sensor setup guide
-
-### LibreNMS Integration (Optional)
-- **librenms-openwrt-thermal-discovery.php** - Custom discovery for nsExtend approach (not needed if using pass)
-
-## What Was Removed
-
-### Removed (Obsolete)
-- thermal-sensors-index.sh (replaced by lm-sensors-pass.sh)
-- thermal-sensors-name.sh (replaced by lm-sensors-pass.sh)
-- thermal-sensors-temp.sh (replaced by lm-sensors-pass.sh)
-- thermal-sensors-combined.sh (not needed)
-- snmp-extend-*.sh (old approach)
-- snmp-temp-single.sh (per-zone approach, not needed)
-- snmp-type-single.sh (per-zone approach, not needed)
-- All documentation markdown files except README and LM-SENSORS-PASS-SETUP
-
-## Missing Files (None!)
-
-All necessary files are present. The package is complete.
+- This **DEPLOYMENT-GUIDE.md** - Installation and usage guide
 
 ## Quick Deployment
 
