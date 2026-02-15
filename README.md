@@ -1,18 +1,17 @@
-# OpenWrt SNMPD Configuration - Improvements & Unified Setup
+# OpenWrt-LibreNMS
+SNMPD OpenWrt configuration - integration for OpenWrt devices to be visible wtih more features in LibreNMS network management platform. Based on https://github.com/librenms/librenms-agent/tree/master/snmp/Openwrt
 
-## Overview
 This package provides unified, auto-detecting SNMP monitoring for OpenWrt devices with support for:
 - Wireless interface metrics (clients, frequency, rate, noise, SNR)
-- Thermal sensor monitoring
+- Thermal sensor monitoring (broken)
 - Auto-discovery of wireless interfaces
 - Dynamic configuration generation
 
-## Key Improvements
+## Key Features
 
 ### 1. Auto-Generation of wlInterfaces.txt
-**Problem**: Previously required manual creation of wlInterfaces.txt for each device.
 
-**Solution**: `wlClients.sh` now auto-detects all wireless interfaces on first run and generates the file automatically.
+`wlClients.sh` auto-detects all wireless interfaces on first run and generates the file automatically.
 
 ```bash
 # First run automatically creates wlInterfaces.txt
@@ -34,9 +33,9 @@ This package provides unified, auto-detecting SNMP monitoring for OpenWrt device
 
 **Solution**: `snmpd-base-config` provides a common base with placeholders for dynamic content.
 
-### 4. Improved Error Handling
-All scripts now have:
-- Better error messages
+### 4. Error Handling
+All scripts have:
+- Error messages
 - Argument validation
 - Fallback behavior
 - Consistent exit codes
@@ -69,24 +68,9 @@ The `pass` script (`lm-sensors-pass.sh`) provides proper data types and table st
 
 ### Quick Setup
 ```bash
-# 1. Run setup script
+# Run setup script
 chmod +x setup-snmpd.sh
 ./setup-snmpd.sh
-
-# 2. Generate and apply config
-/etc/librenms/snmpd-config-generator.sh > /tmp/snmpd-wireless.conf
-
-# 3. Integrate into /etc/config/snmpd
-# Option A: Append to existing config
-cat /tmp/snmpd-wireless.conf >> /etc/config/snmpd
-
-# Option B: Use base template (CAUTION: Overwrites existing config)
-cp snmpd-base-config /etc/config/snmpd
-/etc/librenms/snmpd-config-generator.sh >> /etc/config/snmpd
-
-# 4. Restart snmpd
-/etc/init.d/snmpd restart
-```
 
 ### Manual Installation
 ```bash
