@@ -13,15 +13,38 @@ interfaces_file="$scriptdir/wlInterfaces.txt"
 generate_interfaces_file() {
 	local tmpfile="$interfaces_file.tmp"
 	
-	# Find all wireless interfaces
+	# Find all wireless interfaces that are actually in use
 	for dev in /sys/class/net/*; do
 		iface=$(basename "$dev")
+		
+		# Skip known non-client interfaces
+		case "$iface" in
+			mld*|wifi*|phy*|wlan-*|mon.*) 
+				continue 
+				;;
+		esac
+		
 		# Check if it's a wireless interface
 		if [ -d "$dev/wireless" ] || [ -d "$dev/phy80211" ]; then
-			# Try to get SSID
+			# Try to get SSID using iw first
 			ssid=$(/usr/sbin/iw dev "$iface" info 2>/dev/null | /bin/grep ssid | /usr/bin/cut -f 2 -s -d" " | /usr/bin/tr -d '\n')
-			# If no SSID (interface down or no SSID set), use empty string
-			[ -z "$ssid" ] && ssid=""
+			
+			# If no SSID from iw, try iwinfo
+			if [ -z "$ssid" ]; then
+				ssid=$(/usr/bin/iwinfo "$iface" info 2>/dev/null | /bin/grep "ESSID" | /usr/bin/cut -d'"' -f2)
+			fi
+			
+			# Skip interfaces without SSID (not active AP/client interfaces)
+			[ -z "$ssid" ] && continue
+			
+			# Skip interfaces with "unknown" SSID
+			[ "$ssid" = "unknown" ] && continue
+			
+			# Check if interface is UP
+			if ! /sbin/ip link show "$iface" 2>/dev/null | /bin/grep -q "UP"; then
+				continue
+			fi
+			
 			echo "$iface,$ssid" >> "$tmpfile"
 		fi
 	done
